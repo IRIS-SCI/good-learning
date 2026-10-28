@@ -628,11 +628,20 @@ def main() -> None:
     parser.add_argument("--font", type=Path)
     parser.add_argument("--bold-font", type=Path)
     parser.add_argument("--dpi", type=int, default=150, help="150 default; 300 for print quality")
+    parser.add_argument("--pdf", type=Path,
+                        help="also write the sheet as an A4 PDF (to embed in other PDFs)")
     args = parser.parse_args()
     apply_dpi(max(72, args.dpi))
     data = json.loads(args.source.read_text(encoding="utf-8-sig"))
-    for path in render(data, args.output, args.font, args.bold_font):
+    paths = render(data, args.output, args.font, args.bold_font)
+    for path in paths:
         print(path)
+    if args.pdf:
+        args.pdf.parent.mkdir(parents=True, exist_ok=True)
+        pages = [Image.open(p).convert("RGB") for p in paths]
+        pages[0].save(args.pdf, "PDF", resolution=args.dpi,
+                      save_all=len(pages) > 1, append_images=pages[1:])
+        print(args.pdf)
 
 
 if __name__ == "__main__":

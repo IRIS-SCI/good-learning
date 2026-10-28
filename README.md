@@ -7,7 +7,7 @@
 - 分别制作知识清单和备考计划，保留知识点编号、验收标准及来源
 - 按零基础或复习模式生成自成体系的每日课程，包括例题、变式、混合练习与逐步答案
 - 根据用户的实际作答制作错题本；演示错误会标为模拟，不计入真实掌握状态
-- 把单道错题渲染成一张对照图（PNG）：左边是学习者自己的过程、从出错那一步起标红，右边是订正后的正解，页面顶部先给错误诊断——《错题重做纸》适合手机查看、群聊讲解和打印，和错题本 PDF 互补
+- 把单道错题渲染成一张对照图（PNG）：左边是学习者自己的过程、从出错那一步起标红，右边是订正后的正解，页面顶部先给错误诊断——《错题重做纸》适合手机查看、群聊讲解和打印，和错题本 PDF 互补：图片既可单独发送，也可用 Markdown 图片语法嵌进错题本 PDF
 - 为当日复盘绘制 SVG 思维导图，可选生成 PNG 预览
 - 通过 XeLaTeX 或 LuaLaTeX 编译课程、清单、计划和错题本 PDF；科目目录存放知识清单和备考计划 PDF，每日课程按日期独立成夹；各文件夹顶层只放最终 PDF，Markdown、`.tex` 和其他源文件放在对应的 `源文件` 子目录
 
@@ -58,7 +58,7 @@
 scripts/render_study_pdf.py      常用 Markdown → LaTeX
 scripts/compile_study_pdf.py     LaTeX → PDF
 scripts/render_summary_map.py    JSON → SVG，可选 PNG
-scripts/render_mistake_sheet.py  JSON → 错题重做纸 PNG（左：学习者过程标红，右：正解）
+scripts/render_mistake_sheet.py  JSON → 错题重做纸 PNG（左：学习者过程标红，右：正解），可加 --pdf 出 A4 PDF
 ```
 
 总结图输入为 JSON，包含 `eyebrow`、`title`、`subtitle`、`status`、`description`、`core_label`、`core_title`、`core_subtitle`、`core_foot`、`workload`、`error_count`、`legend`、`note_legend`、`footer`，以及 4—6 个 `branches`；每个分支填写 `side`、`category`、`title`、`rule`、`detail`，如有错题再填写 `error.number`、`error.label`、`error.mistake`、`error.fix`；无错题时填写 `check` 与 `check_fix`

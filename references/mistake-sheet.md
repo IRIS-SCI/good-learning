@@ -74,6 +74,38 @@ python scripts/render_mistake_sheet.py in.json sheet.png --dpi 300 --font /path/
 
 - 依赖 Pillow（`pip install -r requirements.txt`）；中文字体可用 `--font` / `--bold-font` 指定，或通过 `GOOD_LEARNING_FONT` 环境变量；脚本会先找常见字体
 - 多页时第一页写到 `sheet.png`，其余为 `sheet-2.png`、`sheet-3.png`
+- 加 `--pdf sheet.pdf` 会额外产出一份 A4 PDF（多页时合成一个文件），用于单独交付或并入其他 PDF
+
+## 放进错题本 PDF
+
+这张图既能单独发，也能直接印进错题本 PDF：
+
+1. 生成图片，文件名用 ASCII、和错题本的 `.tex` 放在同一个 `源文件` 目录：
+
+   ```text
+   python scripts/render_mistake_sheet.py 第2题.json 科目/源文件/sheet-error-2.png
+   ```
+
+2. 在错题本 Markdown 的该错题小节里**单独一行**引用它（放在订正之后、“再做一题”之前）：
+
+   ```markdown
+   ### 订正
+
+   ……订正正文……
+
+   ![错题重做纸：第 2 题](sheet-error-2.png)
+
+   ### 再做一题
+   ```
+
+3. 照常渲染并编译：
+
+   ```text
+   python scripts/render_study_pdf.py 科目/源文件/错题本.md 科目/源文件/错题本.tex --kind errors
+   python scripts/compile_study_pdf.py 科目/源文件/错题本.tex 科目/错题本.pdf
+   ```
+
+`render_study_pdf.py` 会把这一行转成通栏插图（宽度撑满正文、高度上限 0.86 页，带图注），`compile_study_pdf.py` 会把被引用的图片一并复制进临时编译目录——中文**目录**没问题，中文**文件名**不行；缺图或非 ASCII 文件名会在编译前给出明确报错。
 
 ## 交付前检查
 
