@@ -73,6 +73,10 @@ python scripts/render_summary_map.py examples/summary-map.json summary.svg --png
 python scripts/render_mistake_sheet.py examples/mistake-sheet.json sheet.png
 ```
 
+实现：脚本不依赖 LaTeX，自带一套轻量数学排版。每行先解析成文本、上标下标、分数三类节点，逐个量出宽度和基线上下高度，再排到 38px 的基线网格上——普通行占一格，含分数的行占两格并垂直居中；分数线不压在文字基线上，而是抬到约 0.3 字高的“数学轴”，所以分数和同一行的等号、数字是对齐的。整页按 A4（1240×1754，`--dpi` 可放大）用 Pillow 画到方格纸上：左栏「错误诊断 + 我的过程」，右栏「易错点 / 考察重点 + 正解」，两栏各自独立向下排；`error_from` 及其之后的行用红色，前面正确的部分保持墨色。排版前先在一张空白页上试排，任一侧溢出就自动改出两页版（第 1 页错误记录、第 2 页正解）。
+
+要印进错题本 PDF 时：`render_study_pdf.py` 把单独成行的 `![说明](图.png)` 转成 `\includegraphics`（宽度撑满正文、高度上限 0.86 页，附图注）；`compile_study_pdf.py` 在编译前扫描 `.tex` 里的图片引用，把文件复制进临时编译目录——它本来就在临时目录里编译，不复制会找不到图。缺图或非 ASCII 文件名会在编译前直接报错。
+
 具体工作流程见 [SKILL.md](SKILL.md)，设计与资料检索规则见 [references](references)
 
 ## 内容边界
